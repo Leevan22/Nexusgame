@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexusgame | Hub de Tratos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #090d16;
+            --bg-surface: #121929;
+            --border-tech: rgba(0, 242, 254, 0.15);
+            --neon-cyan: #00f2fe;
+            --neon-emerald: #10b981;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+        }
+
+        /* Navbar tecnológica translúcida */
+        .navbar-tech {
+            background: rgba(18, 25, 41, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-tech);
+        }
+
+        .navbar-brand {
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: -0.5px;
+            color: var(--neon-cyan) !important;
+            font-weight: 700;
+        }
+
+        /* Tarjetas estilo Glassmorphism Minimal */
+        .card-tech {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-tech);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .card-tech:hover {
+            border-color: rgba(0, 242, 254, 0.4);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px -10px rgba(0, 242, 254, 0.15);
+        }
+
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 1px solid var(--border-tech);
+        }
+
+        /* Elementos tipográficos tech */
+        .tech-price {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--neon-emerald);
+            font-weight: 700;
+        }
+
+        .badge-tech {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(0, 242, 254, 0.1);
+            color: var(--neon-cyan);
+            border: 1px solid rgba(0, 242, 254, 0.2);
+            font-size: 0.75rem;
+        }
+
+        /* Botones de acción futuristas */
+        .btn-tech-primary {
+            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+            color: #090d16;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            transition: opacity 0.2s;
+        }
+
+        .btn-tech-primary:hover {
+            opacity: 0.9;
+            color: #090d16;
+        }
+
+        .btn-outline-tech {
+            border: 1px solid var(--border-tech);
+            color: var(--text-main);
+            border-radius: 8px;
+        }
+
+        .btn-outline-tech:hover {
+            border-color: var(--neon-cyan);
+            color: var(--neon-cyan);
+            background: transparent;
+        }
+
+        /* Listas y contenedores laterales */
+        .list-group-item {
+            background-color: transparent !important;
+            border-color: var(--border-tech) !important;
+            color: var(--text-main) !important;
+        }
+
+        h2, h5, h6 {
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-tech fixed-top mb-4">
+        <div class="container py-2">
+            <span class="navbar-brand fs-4">⚡ NEXUSGAME<span style="color: var(--text-muted);">//HUB</span></span>
+            <div class="d-flex align-items-center gap-2">
+                <a href="{% url 'publicar_videojuego' %}" class="btn btn-tech-primary btn-sm px-3 py-2">+ Publicar ítem</a>
+                {% if user.is_staff %}
+                <a href="{% url 'admin:index' %}" class="btn btn-outline-tech btn-sm px-3 py-2">Admin Panel</a>
+                {% endif %}
+                <form action="{% url 'logout' %}" method="POST" class="m-0">
+                    {% csrf_token %}
+                    <button class="btn btn-outline-tech btn-sm px-3 py-2 text-danger border-danger" type="submit">Salir</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container" style="margin-top: 100px;">
+        <div class="row g-4">
+            <!-- Catálogo Principal -->
+            <div class="col-lg-8">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="text-white m-0">Catálogo Activo</h2>
+                    <span class="text-muted small font-monospace">SISTEMA EN LÍNEA</span>
+                </div>
+                <div class="row g-4">
+                    {% for juego in videojuegos %}
+                    <div class="col-md-6">
+                        <div class="card card-tech h-100">
+                            {% if juego.imagen %}
+                            <img src="{{ juego.imagen.url }}" class="card-img-top" alt="{{ juego.titulo }}">
+                            {% endif %}
+                            <div class="card-body d-flex flex-column justify-content-between p-4">
+                                <div>
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <span class="badge badge-tech px-2 py-1">{{ juego.plataforma.nombre }}</span>
+                                        <span class="tech-price fs-5">${{ juego.valor_estimado }}</span>
+                                    </div>
+                                    <h5 class="card-title text-white mb-2">{{ juego.titulo }}</h5>
+                                    <p class="small text-info mb-2">Género: {{ juego.genero }} | Trato: {{ juego.modalidad_trato }}</p>
+                                    <p class="card-text text-muted small mb-3">{{ juego.descripcion }}</p>
+                                </div>
+                                <div>
+                                    <div class="d-flex justify-content-between align-items-center border-top border-secondary pt-3 mt-2">
+                                        <span class="text-muted" style="font-size: 0.8rem;">Uso: {{ juego.tiempo_uso }}</span>
+                                        <a href="{% url 'crear_solicitud' juego.id %}" class="btn btn-tech-primary btn-sm px-3">Solicitar Trato</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12 text-center py-5">
+                        <p class="text-muted">No hay videojuegos registrados en el nodo central.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Panel Lateral de Solicitudes -->
+            <div class="col-lg-4">
+                <h2 class="text-white mb-4">Tus Solicitudes</h2>
+                <div class="card card-tech shadow-sm">
+                    <div class="card-body p-3">
+                        <ul class="list-group list-group-flush">
+                            {% for sol in solicitudes_usuario %}
+                            <li class="list-group-item py-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong class="text-white">{{ sol.videojuego.titulo }}</strong>
+                                        <br><small class="text-info font-monospace">Interés: {{ sol.tipo_interes }}</small>
+                                        <br><small class="text-muted">Estado: <span class="text-warning">{{ sol.estado }}</span></small>
+                                    </div>
+                                    <span class="badge bg-secondary font-monospace">ACTIVA</span>
+                                </div>
+                            </li>
+                            {% empty %}
+                            <li class="list-group-item text-muted text-center py-4">No hay solicitudes en curso.</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

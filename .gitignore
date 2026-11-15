@@ -1,0 +1,24 @@
+# Entorno virtual
+venv/
+env/
+ENV/
+
+# Archivos de caché de Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Base de datos local de desarrollo
+db.sqlite3
+*.sqlite3
+
+# Archivos multimedia subidos por usuarios (opcional, para mantener el repo ligero)
+media/
+
+# Configuración del editor
+.vscode/
+.idea/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
