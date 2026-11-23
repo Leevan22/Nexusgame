@@ -1,26 +1,50 @@
 from django import forms
-from .models import Videojuego, Solicitud
+from aplicacion.models import Videojuego, Solicitud
+
 
 class VideojuegoForm(forms.ModelForm):
     class Meta:
         model = Videojuego
-        fields = ['titulo', 'descripcion', 'genero', 'plataforma', 'valor_estimado', 'tiempo_uso', 'modalidad_trato', 'imagen']
-        widgets = {
-            'titulo': forms.TextInput(attrs={'class': 'form-control'}),
-            'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-            'genero': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: RPG, Acción'}),
-            'plataforma': forms.Select(attrs={'class': 'form-select'}),
-            'valor_estimado': forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}),
-            'tiempo_uso': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: 3 meses, 2 semanas'}),
-            'modalidad_trato': forms.Select(attrs={'class': 'form-select'}),
-            'imagen': forms.ClearableFileInput(attrs={'class': 'form-control'}),
-        }
+        fields = [
+            'titulo',
+            'descripcion',
+            'genero',
+            'modalidad_trato',
+            'tiempo_uso',
+            'valor_estimado',
+            'imagen',
+            'plataforma',
+        ]
+
+    titulo = forms.CharField()
+    descripcion = forms.CharField()
+    genero = forms.CharField()
+    modalidad_trato = forms.CharField()
+    tiempo_uso = forms.CharField()
+    valor_estimado = forms.IntegerField()
+    imagen = forms.ImageField(required=False)
+
+    titulo.widget.attrs['class'] = 'form-control'
+    descripcion.widget.attrs['class'] = 'form-control'
+    genero.widget.attrs['class'] = 'form-control'
+    genero.widget.attrs['placeholder'] = 'ej: rpg, accion, terror'
+    modalidad_trato.widget.attrs['class'] = 'form-control'
+    modalidad_trato.widget.attrs['placeholder'] = 'compra o permuta'
+    tiempo_uso.widget.attrs['class'] = 'form-control'
+    tiempo_uso.widget.attrs['placeholder'] = 'ej: 2 semanas, 3 meses'
+    valor_estimado.widget.attrs['class'] = 'form-control'
+    imagen.widget.attrs['class'] = 'form-control'
+
 
 class SolicitudForm(forms.ModelForm):
     class Meta:
         model = Solicitud
         fields = ['tipo_interes', 'mensaje']
-        widgets = {
-            'tipo_interes': forms.Select(attrs={'class': 'form-select'}),
-            'mensaje': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Indica tu oferta o qué juego ofreces'}),
-        }
+
+    tipo_interes = forms.CharField()
+    mensaje = forms.CharField(required=False)
+
+    tipo_interes.widget.attrs['class'] = 'form-control'
+    tipo_interes.widget.attrs['placeholder'] = 'compra o permuta'
+    mensaje.widget.attrs['class'] = 'form-control'
+    mensaje.widget.attrs['placeholder'] = 'opcional'

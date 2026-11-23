@@ -3,63 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexusgame - Solicitudes de Tratos</title>
+    <title>Nexusgame - Inicio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-
-    <h1>Nexusgame - Sistema de Solicitudes de Tratos</h1>
-    <p>Plataforma para publicar videojuegos y gestionar solicitudes de compra o permuta.</p>
-
-    <h2>Menú principal</h2>
-    <ul>
-        <li><a href="{% url 'publicar_videojuego' %}">Publicar videojuego</a></li>
-        {% if user.is_staff %}
-        <li><a href="{% url 'admin:index' %}">Panel de administracion</a></li>
-        {% endif %}
-        <li>
-            <form action="{% url 'logout' %}" method="POST" style="display:inline;">
-                {% csrf_token %}
-                <button type="submit">Cerrar sesion</button>
-            </form>
-        </li>
-    </ul>
-
-    <hr>
-
-    <h2>Catalogo de videojuegos</h2>
-    {% for juego in videojuegos %}
-        <div>
-            <h3>{{ juego.titulo }}</h3>
-            {% if juego.imagen %}
-                <p><img src="{{ juego.imagen.url }}" alt="{{ juego.titulo }}" width="200"></p>
-            {% endif %}
-            <ul>
-                <li>Plataforma: {{ juego.plataforma.nombre }}</li>
-                <li>Genero: {{ juego.genero }}</li>
-                <li>Modalidad de trato: {{ juego.modalidad_trato }}</li>
-                <li>Tiempo de uso: {{ juego.tiempo_uso }}</li>
-                <li>Valor estimado: ${{ juego.valor_estimado }}</li>
-                <li>Descripcion: {{ juego.descripcion }}</li>
-            </ul>
-            <p><a href="{% url 'crear_solicitud' juego.id %}">Solicitar trato</a></p>
+<body class="container mt-3">
+    <nav class="navbar navbar-dark bg-primary mb-3">
+        <div class="container">
+            <span class="navbar-brand">Nexusgame</span>
+            <div>
+                <a href="{% url 'publicar_videojuego' %}" class="btn btn-secondary btn-sm">Publicar videojuego</a>
+                {% if user.is_staff %}
+                    <a href="{% url 'admin:index' %}" class="btn btn-secondary btn-sm">Admin</a>
+                {% endif %}
+                <form action="{% url 'logout' %}" method="POST" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-light btn-sm">Cerrar sesion</button>
+                </form>
+            </div>
         </div>
-        <hr>
-    {% empty %}
-        <p>No hay videojuegos registrados por el momento.</p>
-    {% endfor %}
+    </nav>
 
-    <h2>Mis solicitudes</h2>
-    {% for sol in solicitudes_usuario %}
-        <div>
-            <p><strong>{{ sol.videojuego.titulo }}</strong></p>
-            <ul>
-                <li>Tipo de interes: {{ sol.tipo_interes }}</li>
-                <li>Estado: {{ sol.estado }}</li>
-            </ul>
+    <div class="alert alert-primary text-center">
+        <h2>Sistema de Solicitudes de Tratos</h2>
+        <p>Publica videojuegos y solicita compra o permuta.</p>
+    </div>
+
+    <h3 class="text-primary">Catalogo de videojuegos</h3>
+    {% if videojuegos %}
+        <div class="row">
+            {% for juego in videojuegos %}
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        {% if juego.imagen %}
+                            <img src="{{ juego.imagen.url }}" class="card-img-top" alt="{{ juego.titulo }}">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">{{ juego.titulo }}</h5>
+                            <p class="card-text">{{ juego.descripcion }}</p>
+                            <p class="card-text">Plataforma: {{ juego.plataforma.nombre }}</p>
+                            <p class="card-text">Genero: {{ juego.genero }}</p>
+                            <p class="card-text">Modalidad: {{ juego.modalidad_trato }}</p>
+                            <p class="card-text">Tiempo de uso: {{ juego.tiempo_uso }}</p>
+                            <p class="card-text">Valor estimado: ${{ juego.valor_estimado }}</p>
+                            <a href="{% url 'crear_solicitud' juego.id %}" class="btn btn-primary btn-sm">Solicitar trato</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
-    {% empty %}
-        <p>No tienes solicitudes registradas.</p>
-    {% endfor %}
+    {% else %}
+        <div class="alert alert-info">No hay videojuegos registrados por el momento.</div>
+    {% endif %}
 
+    <h3 class="text-primary mt-4">Mis solicitudes</h3>
+    {% if solicitudes %}
+        {% for sol in solicitudes %}
+            <div class="card mb-2">
+                <div class="card-body">
+                    <strong>{{ sol.videojuego.titulo }}</strong> - Interes: {{ sol.tipo_interes }} - Estado: {{ sol.estado }}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-info">No tienes solicitudes registradas.</div>
+    {% endif %}
 </body>
 </html>
